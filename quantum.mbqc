@@ -1,0 +1,275 @@
+"""
+HUGR Quantum Extension Definition
+
+This file defines the quantum extension operations used by the Graphix to HUGR converter.
+It provides metadata and documentation for the quantum operations, making the HUGR
+representation more complete and executable.
+"""
+
+from typing import Dict, Any
+import json
+
+# Extension metadata
+EXTENSION_ID = "quantum.mbqc"
+EXTENSION_VERSION = "1.0"
+
+# Operation definitions
+# Each operation has: name, inputs, outputs, description, properties
+
+QUANTUM_OPERATIONS = {
+    # ===== Qubit Allocation =====
+    "PrepareQubit": {
+        "inputs": [],
+        "outputs": ["Qubit"],
+        "description": "Prepare a qubit in the |+⟩ state (MBQC resource state)",
+        "properties": {
+            "initial_state": "|+⟩",
+            "basis": "X",
+            "resource": True
+        }
+    },
+    
+    "QAlloc": {
+        "inputs": [],
+        "outputs": ["Qubit"],
+        "description": "Allocate a qubit in the |0⟩ state",
+        "properties": {
+            "initial_state": "|0⟩",
+            "basis": "Z"
+        }
+    },
+    
+    # ===== Single-Qubit Gates (Clifford) =====
+    "H": {
+        "inputs": ["Qubit"],
+        "outputs": ["Qubit"],
+        "description": "Hadamard gate",
+        "properties": {
+            "unitary": [[1, 1], [1, -1]],  # Normalized by 1/√2
+            "clifford": True,
+            "basis_change": "X ↔ Z"
+        }
+    },
+    
+    "X": {
+        "inputs": ["Qubit"],
+        "outputs": ["Qubit"],
+        "description": "Pauli X gate (bit flip)",
+        "properties": {
+            "unitary": [[0, 1], [1, 0]],
+            "clifford": True,
+            "pauli": True
+        }
+    },
+    
+    "Y": {
+        "inputs": ["Qubit"],
+        "outputs": ["Qubit"],
+        "description": "Pauli Y gate",
+        "properties": {
+            "unitary": [[0, "-i"], ["i", 0]],
+            "clifford": True,
+            "pauli": True
+        }
+    },
+    
+    "Z": {
+        "inputs": ["Qubit"],
+        "outputs": ["Qubit"],
+        "description": "Pauli Z gate (phase flip)",
+        "properties": {
+            "unitary": [[1, 0], [0, -1]],
+            "clifford": True,
+            "pauli": True
+        }
+    },
+    
+    "S": {
+        "inputs": ["Qubit"],
+        "outputs": ["Qubit"],
+        "description": "S gate (phase gate, √Z)",
+        "properties": {
+            "unitary": [[1, 0], [0, "i"]],
+            "clifford": True,
+            "phase": "π/2"
+        }
+    },
+    
+    "Sdg": {
+        "inputs": ["Qubit"],
+        "outputs": ["Qubit"],
+        "description": "S-dagger gate (inverse phase gate)",
+        "properties": {
+            "unitary": [[1, 0], [0, "-i"]],
+            "clifford": True,
+            "phase": "-π/2"
+        }
+    },
+    
+    # ===== Single-Qubit Rotations =====
+    "Rx": {
+        "inputs": ["Qubit"],
+        "outputs": ["Qubit"],
+        "type_params": ["Float64"],  # Angle parameter
+        "description": "Rotation around X-axis by angle θ",
+        "properties": {
+            "axis": "X",
+            "parametric": True
+        }
+    },
+    
+    "Ry": {
+        "inputs": ["Qubit"],
+        "outputs": ["Qubit"],
+        "type_params": ["Float64"],  # Angle parameter
+        "description": "Rotation around Y-axis by angle θ",
+        "properties": {
+            "axis": "Y",
+            "parametric": True
+        }
+    },
+    
+    "Rz": {
+        "inputs": ["Qubit"],
+        "outputs": ["Qubit"],
+        "type_params": ["Float64"],  # Angle parameter
+        "description": "Rotation around Z-axis by angle θ",
+        "properties": {
+            "axis": "Z",
+            "parametric": True
+        }
+    },
+    
+    # ===== Two-Qubit Gates =====
+    "CZ": {
+        "inputs": ["Qubit", "Qubit"],
+        "outputs": ["Qubit", "Qubit"],
+        "description": "Controlled-Z gate (entangling gate for MBQC)",
+        "properties": {
+            "unitary": [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, -1]],
+            "clifford": True,
+            "entangling": True,
+            "symmetric": True,  # CZ(a,b) = CZ(b,a)
+            "mbqc_primitive": True
+        }
+    },
+    
+    "CNOT": {
+        "inputs": ["Qubit", "Qubit"],
+        "outputs": ["Qubit", "Qubit"],
+        "description": "Controlled-NOT gate",
+        "properties": {
+            "clifford": True,
+            "entangling": True,
+            "decomposition": ["H(target)", "CZ(control, target)", "H(target)"]
+        }
+    },
+    
+    # ===== Measurement =====
+    "Measure": {
+        "inputs": ["Qubit"],
+        "outputs": ["Bool"],
+        "description": "Measure qubit in Z basis, returns classical bit",
+        "properties": {
+            "destructive": True,
+            "basis": "Z",
+            "returns": "classical"
+        }
+    },
+    
+    "MeasureX": {
+        "inputs": ["Qubit"],
+        "outputs": ["Bool"],
+        "description": "Measure qubit in X basis",
+        "properties": {
+            "destructive": True,
+            "basis": "X",
+            "decomposition": ["H", "Measure"]
+        }
+    },
+    
+    "MeasureY": {
+        "inputs": ["Qubit"],
+        "outputs": ["Bool"],
+        "description": "Measure qubit in Y basis",
+        "properties": {
+            "destructive": True,
+            "basis": "Y",
+            "decomposition": ["Sdg", "H", "Measure"]
+        }
+    },
+}
+
+
+def get_operation_info(op_name: str) -> Dict[str, Any]:
+    """Get information about a quantum operation."""
+    if op_name in QUANTUM_OPERATIONS:
+        return QUANTUM_OPERATIONS[op_name]
+    else:
+        return {
+            "inputs": [],
+            "outputs": [],
+            "description": f"Unknown operation: {op_name}",
+            "properties": {}
+        }
+
+
+def validate_operation(op_name: str, inputs: list, outputs: list) -> bool:
+    """Validate that an operation has correct input/output types."""
+    if op_name not in QUANTUM_OPERATIONS:
+        return False
+    
+    op_def = QUANTUM_OPERATIONS[op_name]
+    
+    # Check input count
+    if len(inputs) != len(op_def["inputs"]):
+        return False
+    
+    # Check output count
+    if len(outputs) != len(op_def["outputs"]):
+        return False
+    
+    return True
+
+
+def export_extension_json() -> str:
+    """Export extension definition as JSON for documentation."""
+    extension_def = {
+        "extension_id": EXTENSION_ID,
+        "version": EXTENSION_VERSION,
+        "description": "Quantum operations for MBQC (Measurement-Based Quantum Computing)",
+        "operations": QUANTUM_OPERATIONS
+    }
+    return json.dumps(extension_def, indent=2)
+
+
+def print_extension_summary():
+    """Print a summary of all operations in the extension."""
+    print(f"Quantum Extension: {EXTENSION_ID}")
+    print(f"Version: {EXTENSION_VERSION}")
+    print("=" * 70)
+    
+    categories = {
+        "Allocation": ["PrepareQubit", "QAlloc"],
+        "Clifford Gates": ["H", "X", "Y", "Z", "S", "Sdg"],
+        "Rotations": ["Rx", "Ry", "Rz"],
+        "Two-Qubit": ["CZ", "CNOT"],
+        "Measurement": ["Measure", "MeasureX", "MeasureY"]
+    }
+    
+    for category, ops in categories.items():
+        print(f"\n{category}:")
+        for op in ops:
+            if op in QUANTUM_OPERATIONS:
+                info = QUANTUM_OPERATIONS[op]
+                inputs = ", ".join(info["inputs"]) if info["inputs"] else "none"
+                outputs = ", ".join(info["outputs"])
+                print(f"  {op:12} : ({inputs}) → ({outputs})")
+    
+    print("\n" + "=" * 70)
+
+
+if __name__ == "__main__":
+    print_extension_summary()
+    print("\nJSON Export:")
+    print(export_extension_json())
