@@ -12,7 +12,7 @@ import unittest
 
 # Import test modules
 try:
-    from hugr_tests import (
+    from test.hugr_tests import (
         TestBasicConversion, TestSingleQubitGates, TestTwoQubitGates,
         TestRotationGates, TestMultiQubitCircuits, TestPatternCommands,
         TestMeasurementPlanes, TestInputOutputMapping, TestEdgeCases,
@@ -24,7 +24,7 @@ except ImportError:
     print("⚠️  Conversion tests not found (test_graphix_to_hugr.py)")
 
 try:
-    from emulator_tests import (
+    from test.emulator_tests import (
         TestBellStateExecution, TestGHZStateExecution,
         TestSingleQubitGateExecution, TestRotationGateExecution,
         TestGraphixToHugrToExecution, TestQuantumAlgorithms,
