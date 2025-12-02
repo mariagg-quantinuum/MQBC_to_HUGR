@@ -127,7 +127,6 @@ class GraphixToHugrConverter:
         # Then apply H to get |+⟩
         
         # For now, create a custom "PrepareQubit" operation that directly produces |+⟩
-        # HIGH-PRIORITY FIX: Use proper extension ID
         prep_op = ops.Custom(
             "PrepareQubit",
             tys.FunctionType([], [tys.Qubit]),  # No inputs, outputs a qubit
@@ -231,7 +230,6 @@ class GraphixToHugrConverter:
         Process a Pauli X correction command.
         Applies X gate conditionally based on measurement outcomes.
         
-        HIGH-PRIORITY FIX: Implements proper conditional operations.
         The X correction should only be applied if the XOR of measurement 
         outcomes in cmd.domain is 1. We use HUGR's Conditional node to 
         express this classical control flow.
@@ -273,7 +271,6 @@ class GraphixToHugrConverter:
         Process a Pauli Z correction command.
         Applies Z gate conditionally based on measurement outcomes.
         
-        HIGH-PRIORITY FIX: Implements proper conditional operations.
         The Z correction should only be applied if the XOR of measurement
         outcomes in cmd.domain is 1.
         """
@@ -371,9 +368,7 @@ class GraphixToHugrConverter:
             # skip
             print("[Warning] No decomposition available")
             pass
-    
-    # ===== HIGH-PRIORITY FIX 1: Conditional Operation Helpers =====
-    
+        
     def _compute_xor_of_measurements(self, domain: Set[int]) -> ops.Wire:
         """
         Compute XOR of measurement outcomes for nodes in domain.
@@ -432,12 +427,7 @@ class GraphixToHugrConverter:
             
         Returns:
             Wire with the (possibly modified) qubit
-        """
-        # For now, use a simpler approach: create a custom conditional operation
-        # A full implementation would use HUGR's Conditional node with case analysis
-        
-        # Create a custom "Conditional{Gate}" operation
-        # This is a placeholder until we implement full Conditional nodes
+        """        
         cond_gate_op = ops.Custom(
             f"Conditional{gate_name}",
             tys.FunctionType([tys.Bool, tys.Qubit], [tys.Qubit]),
@@ -446,11 +436,8 @@ class GraphixToHugrConverter:
         
         result_node = self.dfg.add_op(cond_gate_op, condition, qubit_wire)
         return result_node.out(0)
-        
-    # ===== End of Conditional Operation Helpers =====
-        
+                
     def _create_h_gate(self):
-        """HIGH-PRIORITY FIX: Use proper extension ID"""
         return ops.Custom(
             "H",
             tys.FunctionType([tys.Qubit], [tys.Qubit]),
@@ -458,7 +445,6 @@ class GraphixToHugrConverter:
         )
     
     def _create_x_gate(self):
-        """HIGH-PRIORITY FIX: Use proper extension ID"""
         return ops.Custom(
             "X",
             tys.FunctionType([tys.Qubit], [tys.Qubit]),
@@ -466,7 +452,6 @@ class GraphixToHugrConverter:
         )
     
     def _create_y_gate(self):
-        """HIGH-PRIORITY FIX: Use proper extension ID"""
         return ops.Custom(
             "Y",
             tys.FunctionType([tys.Qubit], [tys.Qubit]),
@@ -474,7 +459,6 @@ class GraphixToHugrConverter:
         )
     
     def _create_z_gate(self):
-        """HIGH-PRIORITY FIX: Use proper extension ID"""
         return ops.Custom(
             "Z",
             tys.FunctionType([tys.Qubit], [tys.Qubit]),
@@ -482,7 +466,6 @@ class GraphixToHugrConverter:
         )
     
     def _create_s_gate(self):
-        """HIGH-PRIORITY FIX: Use proper extension ID"""
         return ops.Custom(
             "S",
             tys.FunctionType([tys.Qubit], [tys.Qubit]),
@@ -490,7 +473,6 @@ class GraphixToHugrConverter:
         )
     
     def _create_sdg_gate(self):
-        """HIGH-PRIORITY FIX: Use proper extension ID"""
         return ops.Custom(
             "Sdg",
             tys.FunctionType([tys.Qubit], [tys.Qubit]),
@@ -498,7 +480,6 @@ class GraphixToHugrConverter:
         )
     
     def _create_cz_gate(self):
-        """HIGH-PRIORITY FIX: Use proper extension ID"""
         return ops.Custom(
             "CZ",
             tys.FunctionType([tys.Qubit, tys.Qubit], [tys.Qubit, tys.Qubit]),
@@ -509,7 +490,7 @@ class GraphixToHugrConverter:
         """
         Create an Rz rotation gate.
         
-        HIGH-PRIORITY FIX: Angle Handling with Type Arguments
+        Angle Handling with Type Arguments
         Instead of just storing angle in metadata, we now pass it as a 
         type argument to the Custom operation, making it properly part
         of the operation's type signature and accessible for execution.
@@ -551,7 +532,6 @@ class GraphixToHugrConverter:
         )
     
     def _create_measure_op(self):
-        """HIGH-PRIORITY FIX: Use proper extension ID"""
         return ops.Custom(
             "Measure",
             tys.FunctionType([tys.Qubit], [tys.Bool]),

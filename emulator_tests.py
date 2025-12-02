@@ -40,7 +40,6 @@ class TestBellStateExecution(unittest.TestCase):
             probs = np.abs(state.flatten()) ** 2
             probs = probs / np.sum(probs)
             outcome_idx = np.random.choice(len(probs), p=probs)
-            # FIXED: Convert to 2-bit binary string
             results[format(outcome_idx, '02b')] += 1
                 
         bell_count = results.get('00', 0) + results.get('11', 0)

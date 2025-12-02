@@ -37,7 +37,23 @@ except ImportError:
     BACKENDS_AVAILABLE = {}
     print("⚠️  Emulator tests not found (test_emulator_execution.py)")
 
-
+try:
+    from guppy_tests import (
+        TestSingleQubitGateConversion,
+        TestRotationGateConversion,
+        TestTwoQubitGateConversion,
+        TestMultiQubitCircuits,
+        TestCodeStructure,
+        TestVariableManagement,
+        TestEdgeCases,
+        TestGuppyCompilation,
+        TestComparisonWithHUGR
+    )
+    GUPPY_CONVERSION_TESTS_AVAILABLE = True
+except ImportError:
+    GUPPY_CONVERSION_TESTS_AVAILABLE = False
+    print("⚠️  Guppy conversion tests not found (guppy_tests.py)")
+    
 def run_all_tests(verbose=2):
     """Run complete test suite."""
     print("\n" + "=" * 70)
