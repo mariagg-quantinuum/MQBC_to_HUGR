@@ -1,0 +1,12 @@
+/Users/maria.gragera-garces/Desktop/MQBC_to_HUGR/graphix_to_hugr/target/debug/deps/serde-71692c13e62bd590.d: /Users/maria.gragera-garces/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /Users/maria.gragera-garces/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /Users/maria.gragera-garces/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /Users/maria.gragera-garces/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /Users/maria.gragera-garces/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /Users/maria.gragera-garces/Desktop/MQBC_to_HUGR/graphix_to_hugr/target/debug/build/serde-7cb620e44cc644da/out/private.rs
+
+/Users/maria.gragera-garces/Desktop/MQBC_to_HUGR/graphix_to_hugr/target/debug/deps/libserde-71692c13e62bd590.rmeta: /Users/maria.gragera-garces/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /Users/maria.gragera-garces/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /Users/maria.gragera-garces/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /Users/maria.gragera-garces/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /Users/maria.gragera-garces/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /Users/maria.gragera-garces/Desktop/MQBC_to_HUGR/graphix_to_hugr/target/debug/build/serde-7cb620e44cc644da/out/private.rs
+
+/Users/maria.gragera-garces/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs:
+/Users/maria.gragera-garces/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs:
+/Users/maria.gragera-garces/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs:
+/Users/maria.gragera-garces/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs:
+/Users/maria.gragera-garces/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs:
+/Users/maria.gragera-garces/Desktop/MQBC_to_HUGR/graphix_to_hugr/target/debug/build/serde-7cb620e44cc644da/out/private.rs:
+
+# env-dep:OUT_DIR=/Users/maria.gragera-garces/Desktop/MQBC_to_HUGR/graphix_to_hugr/target/debug/build/serde-7cb620e44cc644da/out
