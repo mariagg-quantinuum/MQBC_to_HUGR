@@ -21,7 +21,7 @@ try:
     CONVERSION_TESTS_AVAILABLE = True
 except ImportError:
     CONVERSION_TESTS_AVAILABLE = False
-    print("⚠️  Conversion tests not found (test_graphix_to_hugr.py)")
+    print(" Conversion tests not found (test_graphix_to_hugr.py)")
 
 try:
     from emulator_tests import (
@@ -35,7 +35,7 @@ try:
 except ImportError:
     EMULATOR_TESTS_AVAILABLE = False
     BACKENDS_AVAILABLE = {}
-    print("⚠️  Emulator tests not found (test_emulator_execution.py)")
+    print(" Emulator tests not found (test_emulator_execution.py)")
 
 try:
     from guppy_tests import (
@@ -52,8 +52,8 @@ try:
     GUPPY_CONVERSION_TESTS_AVAILABLE = True
 except ImportError:
     GUPPY_CONVERSION_TESTS_AVAILABLE = False
-    print("⚠️  Guppy conversion tests not found (guppy_tests.py)")
-    
+    print(" Guppy conversion tests not found (guppy_tests.py)")
+
 def run_all_tests(verbose=2):
     """Run complete test suite."""
     print("\n" + "=" * 70)
@@ -81,7 +81,7 @@ def run_all_tests(verbose=2):
         suite.addTests(loader.loadTestsFromTestCase(TestHugrStructure))
         print("   ✓ Loaded 12 conversion test suites")
     else:
-        print("\n⚠️  Conversion tests not available")
+        print("\n Conversion tests not available")
     
     # Add emulator tests
     if EMULATOR_TESTS_AVAILABLE:
@@ -101,13 +101,13 @@ def run_all_tests(verbose=2):
         suite.addTests(loader.loadTestsFromTestCase(TestCompilationQuality))
         print("   ✓ Loaded 8 emulator test suites")
     else:
-        print("\n⚠️  Emulator tests not available")
+        print("\n Emulator tests not available")
     
     if suite.countTestCases() == 0:
-        print("\n❌ No tests loaded!")
+        print("\nNo tests loaded!")
         return False
     
-    print(f"\n📊 Total tests to run: {suite.countTestCases()}")
+    print(f"\nTotal tests to run: {suite.countTestCases()}")
     
     # Run tests
     print("\n" + "=" * 70)
@@ -135,14 +135,14 @@ def run_all_tests(verbose=2):
     
     # Show failures/errors if any
     if result.failures:
-        print(f"\n⚠️  {len(result.failures)} FAILURES:")
+        print(f"\n {len(result.failures)} FAILURES:")
         for test, traceback in result.failures[:3]:  # Show first 3
             print(f"   • {test}")
         if len(result.failures) > 3:
             print(f"   ... and {len(result.failures) - 3} more")
     
     if result.errors:
-        print(f"\n❌ {len(result.errors)} ERRORS:")
+        print(f"\n{len(result.errors)} ERRORS:")
         for test, traceback in result.errors[:3]:
             print(f"   • {test}")
         if len(result.errors) > 3:
@@ -151,9 +151,9 @@ def run_all_tests(verbose=2):
     # Final verdict
     print("\n" + "=" * 70)
     if result.wasSuccessful():
-        print("✅ ALL TESTS PASSED!")
+        print("ALL TESTS PASSED!")
     else:
-        print("❌ SOME TESTS FAILED")
+        print("SOME TESTS FAILED")
     print("=" * 70)
     
     return result.wasSuccessful()
@@ -162,10 +162,10 @@ def run_all_tests(verbose=2):
 def run_conversion_tests_only():
     """Run only conversion tests."""
     if not CONVERSION_TESTS_AVAILABLE:
-        print("❌ Conversion tests not available")
+        print("Conversion tests not available")
         return False
     
-    print("\n📦 Running Conversion Tests Only (Graphix → HUGR)")
+    print("\nRunning Conversion Tests Only (Graphix → HUGR)")
     loader = unittest.TestLoader()
     suite = unittest.TestSuite()
     
@@ -191,10 +191,10 @@ def run_conversion_tests_only():
 def run_emulator_tests_only():
     """Run only emulator execution tests."""
     if not EMULATOR_TESTS_AVAILABLE:
-        print("❌ Emulator tests not available")
+        print("Emulator tests not available")
         return False
     
-    print("\n🖥️  Running Emulator Tests Only")
+    print("\n Running Emulator Tests Only")
     print(f"Available backends: {[k for k, v in BACKENDS_AVAILABLE.items() if v]}")
     
     loader = unittest.TestLoader()
