@@ -98,7 +98,7 @@ class GraphixToHugrConverter:
         Process a single Graphix command and add corresponding operations to HUGR.
         
         Args:
-            cmd: The Graphix command (N, E, M, X, Z, or C)
+            cmd: The Graphix commands (N, E, M, X, Z, or C)
         """
         if cmd.kind == CommandKind.N:
             self._process_prepare(cmd)

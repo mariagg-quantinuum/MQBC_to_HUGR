@@ -146,7 +146,36 @@ pip install graphix guppy hugr pytket
 ```
 
 ## Rust implementation
- TODO
+talk about it - what does it do
+difference with the python ones
+what each doc does
+
+## NEXUS runs
+mbqc_vqe_nexus.py - runs on nexus h2 simulator!
+made with the template vqe notebook 
+
 
 ## Available examples
- TODO
+other available notebook examples include (explain what they show a bit):
+
+guppy_examples.ipynb
+comparison_notebook.ipynb
+main.ipynb
+examples_execution_to_hugr.ipynb
+
+## Tests
+all these python files are tests - explain what they are testing and how they can be run with
+```
+coverage run tests.py
+```
+: 
+
+test_aer - sim test
+test_h1 - sim test
+tests
+emulator_tests
+hugr_tests
+
+
+
+
