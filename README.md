@@ -234,7 +234,6 @@ Key Features:
 - Generates Guppy quantum code from MBQC patterns
 - Compiles to HUGR for Quantinuum execution
 - Uses Nexus to track VQE parameters (angles, energies)
-- Implements context management for resuming interrupted workflows
 - Calculates H₂ ground state energy with parameterized circuits
 
 ---
