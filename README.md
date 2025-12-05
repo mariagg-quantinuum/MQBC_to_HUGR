@@ -6,9 +6,20 @@ Three converters that translate (Graphix)[https://graphix.readthedocs.io/en/late
 
 | Converter | Target | Conditional Logic | Output Type |
 |-----------|--------|-------------------|-------------|
-| graphix_to_guppy | Guppy | Custom if-statements | String code / GuppyModule |
+| graphix_to_guppy | Guppy | if-statements | String code / GuppyModule |
 | graphix_to_hugr | HUGR | Custom ConditionalX/Z ops | HUGR dataflow graph |
 | graphix_to_pytket | pytket | Native `condition` kwarg | pytket Circuit |
+
+## Command Translation Table
+
+| MBQC Command | Description | Guppy | HUGR | pytket |
+|--------------|-------------|-------------------|-------------------|---------------------|
+| **N** (Prepare) | Prepare qubit in \|+⟩ state | `q = qubit()`<br>`q = h(q)` | `prep_op = Custom("PrepareQubit", ...)`<br>`wire = dfg.add_op(prep_op).out(0)` | `qubit = Qubit("q", i)`<br>`circuit.H(qubit)` |
+| **E** (Entangle) | Apply CZ gate between two qubits | `q1, q2 = cz(q1, q2)` | `cz_op = Custom("CZ", ...)`<br>`node = dfg.add_op(cz_op, q1, q2)`<br>`q1 = node.out(0)`<br>`q2 = node.out(1)` | `circuit.CZ(q1, q2)` |
+| **M** (Measure) | Measure qubit in specified basis | **XY plane:**<br>`q = rz(q, -angle)`<br>`q = h(q)`<br>`m = measure(q)`<br><br>**YZ plane:**<br>`q = rx(q, -angle)`<br>`m = measure(q)`<br><br>**XZ plane:**<br>`q = ry(q, angle)`<br>`m = measure(q)` | **XY plane:**<br>`rz_op = Custom("Rz", ..., args=[-angle])`<br>`q = dfg.add_op(rz_op, q).out(0)`<br>`h_op = Custom("H", ...)`<br>`q = dfg.add_op(h_op, q).out(0)`<br>`m_op = Custom("Measure", ...)`<br>`m = dfg.add_op(m_op, q).out(0)`<br><br>*(Similar for YZ, XZ)* | **XY plane:**<br>`circuit.Rz(-angle, q)`<br>`circuit.H(q)`<br>`bit = Bit("m", i)`<br>`circuit.Measure(q, bit)`<br><br>**YZ plane:**<br>`circuit.Rx(-angle, q)`<br>`circuit.Measure(q, bit)`<br><br>**XZ plane:**<br>`circuit.Ry(angle, q)`<br>`circuit.Measure(q, bit)` |
+| **X** (Pauli X) | Apply X correction (may be conditional) | **Unconditional:**<br>`q = x(q)`<br><br>**Conditional:**<br>`if m0 ^ m1 ^ m2:`<br>`    q = x(q)` | **Unconditional:**<br>`x_op = Custom("X", ...)`<br>`q = dfg.add_op(x_op, q).out(0)`<br><br>**Conditional:**<br>`cond = compute_xor(domain)`<br>`cond_x_op = Custom("ConditionalX", ...)`<br>`q = dfg.add_op(cond_x_op, cond, q).out(0)` | **Unconditional:**<br>`circuit.X(q)`<br><br>**Conditional:**<br>`cond = build_condition(domain)`<br>`circuit.X(q, condition=cond)` |
+| **Z** (Pauli Z) | Apply Z correction (may be conditional) | **Unconditional:**<br>`q = z(q)`<br><br>**Conditional:**<br>`if m0 ^ m1 ^ m2:`<br>`    q = z(q)` | **Unconditional:**<br>`z_op = Custom("Z", ...)`<br>`q = dfg.add_op(z_op, q).out(0)`<br><br>**Conditional:**<br>`cond = compute_xor(domain)`<br>`cond_z_op = Custom("ConditionalZ", ...)`<br>`q = dfg.add_op(cond_z_op, cond, q).out(0)` | **Unconditional:**<br>`circuit.Z(q)`<br><br>**Conditional:**<br>`cond = build_condition(domain)`<br>`circuit.Z(q, condition=cond)` |
+| **C** (Clifford) | Apply Clifford gate (decomposed into H, S, Pauli gates) | **Example (Clifford #1 = S):**<br>`q = s(q)`<br><br>**Example (Clifford #5):**<br>`q = h(q)`<br>`q = s(q)` | **Example (Clifford #1 = S):**<br>`s_op = Custom("S", ...)`<br>`q = dfg.add_op(s_op, q).out(0)`<br><br>**Example (Clifford #5):**<br>`h_op = Custom("H", ...)`<br>`q = dfg.add_op(h_op, q).out(0)`<br>`s_op = Custom("S", ...)`<br>`q = dfg.add_op(s_op, q).out(0)` | **Example (Clifford #1 = S):**<br>`circuit.S(q)`<br><br>**Example (Clifford #5):**<br>`circuit.H(q)`<br>`circuit.S(q)` |
 
 ## Key Differences between translators
 
@@ -24,7 +35,6 @@ if m_0 ^ m_1:
 
 HUGR: Creates custom `ConditionalX` and `ConditionalZ` operations in the dataflow graph
 ```python
-# Custom operation applies gate conditionally
 cond_gate_op = ops.Custom(
     "ConditionalX",
     tys.FunctionType([tys.Bool, tys.Qubit], [tys.Qubit]),
@@ -34,7 +44,6 @@ cond_gate_op = ops.Custom(
 
 pytket: Uses pytket's built-in conditional system
 ```python
-# Native pytket conditional expression
 condition = reg_eq(bit_0 ^ bit_1, 1)
 circuit.X(qubit, condition=condition)
 ```
@@ -47,7 +56,7 @@ circuit.X(qubit, condition=condition)
 from graphix import Circuit
 from graphix_to_guppy import convert_graphix_pattern_to_guppy
 
-# Create and transpile circuit
+# Create pattern
 circuit = Circuit(1)
 circuit.h(0)
 pattern = circuit.transpile().pattern
@@ -101,11 +110,10 @@ print(pytket_circuit.get_commands())
 
 Output: pytket Circuit with conditional gates
 ```python
-# Pseudo-circuit representation
 H q[0];
 CZ q[0], q[1];
 Measure q[0] -> m[0];
-if (m[0] == 1) Z q[1];  # Using pytket's condition system
+if (m[0] == 1) Z q[1];  
 ```
 
 ## Implementation Details
@@ -123,15 +131,6 @@ Rz(-θ)
 H
 Measure → m
 ```
-
-### Clifford Gates
-
-Clifford operations decompose into H, S, and Pauli gates using standard 24-element decomposition tables:
-- Identity: `[]`
-- S gate: `['S']`
-- Z gate: `['S', 'S']`
-- Hadamard: `['H']`
-- ...and 20 more combinations
 
 ### Qubit Preparation
 
@@ -343,9 +342,9 @@ python -m unittest hugr_tests.TestRotationGates
 - TestRotationGateExecution: Rx, Ry rotation accuracy
 
 Backends tested:
-- ✓ Graphix simulator (always available)
-- ✓ H1-1LE emulator (if pytket-quantinuum installed)
-- ✓ Qiskit Aer (if pytket-qiskit installed)
+- Graphix simulator (always available)
+- H1-1LE emulator (if pytket-quantinuum installed)
+- Qiskit Aer (if pytket-qiskit installed)
 
 `test_h1.py` - Quantinuum H1-1LE Quick Test
 - Minimal Bell state test on local H1-1LE emulator
