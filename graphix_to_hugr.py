@@ -10,7 +10,6 @@ from hugr.build.dfg import Dfg
 # Extension ID for quantum operations (defined in quantum_extension.py)
 QUANTUM_EXTENSION = "quantum.mbqc"
 
-
 class GraphixToHugrConverter:
     
     def __init__(self):

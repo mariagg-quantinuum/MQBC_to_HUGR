@@ -4,6 +4,7 @@ from graphix.pattern import Pattern
 from graphix.command import N, E, M, X, Z, C, CommandKind
 from graphix.fundamentals import Plane
 from graphix.clifford import Clifford
+from graphix import Circuit as GraphixCircuit
 
 try:
     from pytket import Circuit, Qubit, Bit, OpType
@@ -435,7 +436,6 @@ if __name__ == "__main__":
         print("  pip install pytket")
         exit(1)
     
-    from graphix import Circuit as GraphixCircuit
     
     # Test with simple Hadamard gate
     print("\nTest 1: Circuit with Hadamard gate")
